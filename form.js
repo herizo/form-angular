@@ -130,7 +130,23 @@ app.controller('formCtrl', function($scope , $http){
     }
 
     $scope.submit = function(){
-        alert('foo');
+
+        $http.post(
+            "/formulaire/submit.php", 
+            {data: $scope.params},
+            {headers: {'Content-Type': 'application/json'} }
+        ).then(
+        function successCallback(response) {
+        // this callback will be called asynchronously
+        // when the response is available
+            console.log(response);
+        }, function errorCallback(response) {
+        // called asynchronously if an error occurs
+        // or server returns response with an error status
+            console.log("failed");
+            console.log(response);
+        });
     }
+    
 
 });
