@@ -76,17 +76,18 @@ app.controller('formCtrl', function($scope , $http){
             if($scope.step == 2){
 
                 if($scope.params.types_menee && $scope.params.diametre_poulie_menee && $scope.params.nb_gorge_menee && $scope.params.m_unit && $scope.params.diametre_arbre_menee){
-                   $scope.error = false;
+                    if ($scope.params.types_menee != $scope.params.types_moteur){
+                        $scope.error = 'Il semble que les données que vous avez encodées contiennent une erreur. Le type de la poulie menée (SPA, SPB, SPZ) doit être identique au type de la poulie moteur. Pouvez-vous vérifier vos données? Si vous pensez avoir fait une erreur sur le type de poulie moteur, veuillez retourner en arrière pour corriger.';
+                    }
+                    else {
+                        $scope.error  = false;
+                    }
+                   console.log($scope.params.diametre_arbre_menee);
                 }else {
                    $scope.error = 'Vous devez remplir tous les champs avant de passer a l\'étape suivante!';
                 }
 
-                if ($scope.params.types_menee != $scope.params.types_moteur){
-                    $scope.error = 'Il semble que les données que vous avez encodées contiennent une erreur. Le type de la poulie menée (SPA, SPB, SPZ) doit être identique au type de la poulie moteur. Pouvez-vous vérifier vos données? Si vous pensez avoir fait une erreur sur le type de poulie moteur, veuillez retourner en arrière pour corriger.';
-                }
-                else {
-                    $scope.error  = false;
-                }
+                
             }
 
             if($scope.step == 3){
@@ -99,7 +100,6 @@ app.controller('formCtrl', function($scope , $http){
             
             if ($scope.step == 4) {
                 if ($scope.params.longueur_courroie && $scope.params.type_courroie){
-                    console.log($scope.params.longueur_courroie);
                     $scope.error = false;
                 }else {
                    $scope.error = 'Vous devez remplir tous les champs avant de passer a l\'étape suivante!';
