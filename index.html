@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container container-fluid" ng-app="formulaire" ng-controller="formCtrl">
+        <div class="wrapper">
+            <div class="text-center">
+                <img class="image img-fluid"src="/formulaire/logo_05.jpg"/>
+            </div>
+        </div>
+            <form role="form" >
+                <div class="page1 grid_24" ng-show="step==1">
+                   <h2>Poulie Moteur</h2>
+                   <div class="form-group">
+                        <label for="type_poulie_moteur">Type de poulie moteur</label>
+                        <select class="form-control" id="type_poulie_moteur" ng-model="params.types_moteur">
+                            <option value="" selected disabled >Choisir un type</option>
+                            <option ng-repeat="type in data.types" value="{{type.value}}" >{{type.name}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                       <label for="diametre_poulie_moteur">Diamètre de la poulie moteur</label>
+
+                       <select class="form-control" ng-model="params.diametre_poulie_moteur">
+                            <option value="" selected disabled >Choisir un diamètre</option>
+                            <option ng-if="params.types_moteur=='spa'" ng-repeat="d in data.spa_diametres " value="{{d}}">{{d}}</option>
+                            <option ng-if="params.types_moteur=='spb'" ng-repeat="d in data.spb_diametres" value="{{d}}">{{d}}</option>
+                            <option ng-if="params.types_moteur=='spz'" ng-repeat="d in data.spz_diametres" value="{{d}}">{{d}}</option>
+                       </select>
+                    </div>
+                    <div class="form-group">
+                       <label>Le nombre de gorges de la poulie moteur</label>
+                       <select ng-model="params.nb_gorge" class="form-control">
+                           <option value="" selected disabled >Choisir un nombre de gorges</option>
+                           <option ng-repeat="g in data.nombre_gorges" value="g">{{g}}</option>
+                       </select>
+                    </div>
+
+                    <h5>le diamètre de l'arbre sur lequel est montée la poulie moteur:</h5>
+
+                    <div class="form-group">
+                        <hr>
+                        <p>Unité de mesure</p>
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" ng-model="params.unite_mesure" value="mm" id="mm"><label class="form-check-label" for="mm"> Métrique (mm)</label>
+                        </div>
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" ng-model="params.unite_mesure" value="pouce" id="pouce"><label class="form-check-label" for="pouce">Pouce</label>
+                        </div>
+
+                        <hr>
+                        
+                       <p>Diamètre de l'arbre</p>
+                       <select class="form-control" ng-model="params.diametre_arbre">
+                            <option value="" selected disabled >Choisir un diamètre</option>
+                            <option ng-if="params.unite_mesure=='mm'" ng-repeat="u in data.taper_metriques" value="{{u}}">{{u}}</option>
+                            <option ng-if="params.unite_mesure=='pouce'" ng-repeat="u in data.taper_pouces" value="{{u}}">{{u}}</option>
+                       </select>
+
+                    </div>
+                    <div class="alert alert-danger" ng-show="error">
+                        {{error}}
+                    </div>
+
+
+                    <button class="btn btn-primary right" ng-click="nextStep()">Suivant</button>
+
+                </div>
+
+                <!-- page  2 -->
+                <div class="page2" ng-show="step==2">
+                    <h2>Poulie Menée</h2>
+
+                    <div class="form-group">
+                        <label for="type_poulie_menee">Type de poulie menée</label>
+                        <select class="form-control" id="type_poulie_menee" ng-model="params.types_menee">
+                            <option value="" selected disabled >Choisir un type</option>
+                            <option ng-repeat="type in data.types" value="{{type.value}}" >{{type.name}}</option>
+                        </select>
+                    </div>
+                    
+                    <div class="alert alert-danger" ng-show = "params.types_menee != undefined  && params.types_menee != params.types_moteur">
+                        <p>Il semble que les données que vous avez encodées contiennent une erreur. Le type de la poulie menée (SPA, SPB, SPZ) doit être identique au type de la poulie moteur. Pouvez-vous vérifier vos données? Si vous pensez avoir fait une erreur sur le type de poulie moteur, veuillez retourner en arrière pour corriger."
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                       <label for="diametre_poulie_menee">Diamètre de la poulie menee</label>
+                       <select class="form-control" ng-model="params.diametre_poulie_menee">
+                            <option value="" selected disabled >Choisir un diamètre</option>
+                            <option ng-if="params.types_menee=='spa'" ng-repeat="d in data.spa_diametres" value="{{d}}">{{d}}</option>
+                            <option ng-if="params.types_menee=='spb'" ng-repeat="d in data.spb_diametres" value="{{d}}">{{d}}</option>
+                            <option ng-if="params.types_menee=='spz'" ng-repeat="d in data.spz_diametres" value="{{d}}">{{d}}</option>
+                       </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nb_gorge_menee">le nombre de gorges de la poulie menée</label>
+                        <select class="form-control" id="nb_gorge_menee" ng-model = "params.nb_gorge_menee">
+                            <option value="" selected disabled >chosir le nombre de gorge</option>
+                            <option ng-repeat= "nb_gorge in data.nombre_gorges" value="{{nb_gorge}}">{{nb_gorge}}</option>
+                        </select>
+                    </div>
+
+                    <h5>Diamètre de l'arbre sur lequel est montée la poulie menée</h5>
+                    <div class="form-group">
+                        <hr>
+                        <p>Unité de mesure</p>
+
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" ng-model="params.m_unit" value="mm" id="mm"><label class="form-check-label" for="mm"> Métrique (mm)</label>
+                        </div>
+
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" ng-model="params.m_unit" value="pouce" id="pouce"><label class="form-check-label" for="pouce">Pouce</label>
+                        </div>
+                        <p>Diamètre</p>
+                       <select class="form-control" ng-model="params.diametre_arbre_menee">
+                            <option value="" selected disabled >Choisir un diamètre</option>
+                            <option ng-if="params.m_unit=='mm'" ng-repeat="u in data.taper_metriques" value="{{u}}">{{u}}</option>
+                            <option ng-if="params.m_unit=='pouce'" ng-repeat="u in data.taper_pouces" value="{{u}}">{{u}}</option>
+                       </select>
+
+                    </div>
+                    <div class="alert alert-danger" ng-show="error">
+                        {{error}}
+                    </div>
+
+                    <button class="btn btn-info left" ng-click="prevStep()">Precedent</button>
+                    <button class="btn btn-primary right" ng-click="nextStep()">Suivant</button>
+                </div>
+
+                <div class="page3" ng-show="step == 3">
+                    <h2>L'Entraxe</h2>
+                    
+                    <div class="form-group">
+                        <h5> Mesure de l'entraxe </h5>
+                        <hr>
+                        <select class="form-control" ng-model = "params.entraxe">
+                            <option value="">mesure de l'entraxe </option>
+                            <option ng-repeat=" m in data.entraxe " value="{{m}}">{{m}} (mm)</option>
+                        </select>
+                    </div>
+                    <div class="alert alert-danger" ng-show="error">
+                        {{error}}
+                    </div> 
+                    <button class="btn btn-info left" ng-click="prevStep()">Precedent</button>
+                    <button class="btn btn-primary right" ng-click="nextStep()">Suivant</button>
+                </div>
+
+
+                <div class="page4" ng-show= "step == 4">
+                    <h2>La courroie utilisée</h2>
+
+                    <div class="form-group">
+                        <label > Type de courroie utilisée </label>
+                        <select class= "form-control"id="type_courroie" ng-model= "params.type_courroie">
+                            <option value="">Type de courroie</option>
+                            <option ng-repeat= " type in data.type_courroie[params.types_moteur]" ng-value="type"> {{type}}</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="longueur_courroie"> Longueur de la couroie</label>
+                        <select class="form-control" id="longueur_courroie" name="longueur_courroie" ng-model ="params.longueur_courroie">
+                            <option value="">Longueur de la courroie</option>
+                            <option ng-if="params.types_moteur == 'spb' " ng-repeat="l in data.spb_longueurs[params.type_courroie]" ng-value="l">{{l}}</option>
+                            <option ng-if="params.types_moteur == 'spz' " ng-repeat="l in data.spz_longueurs[params.type_courroie]" ng-value="l">{{l}}</option>
+                            <option ng-if="params.types_moteur == 'spa' " ng-repeat="l in data.spa_longueurs[params.type_courroie]" ng-value="l">{{l}}</option>
+                        </select>
+                    </div>
+
+                    <div class="alert alert-danger" ng-show="error">
+                        {{error}}
+                    </div>
+
+                    <button class="btn btn-info left" ng-click="prevStep()">Precedent</button>
+                    <button class="btn btn-primary right" ng-click="nextStep()">Suivant</button>
+
+                </div>
+
+                <div class="page5" ng-show="step == 5">
+
+                    <div class="form-group">
+
+                        <h5> LE RENDEMENT ACTUEL DU GROUPE HVAC </h5>
+                        <hr>
+                        <label for="rendement_actuel">rendement du groupe hvac</label>
+                        <input class="form-control" type="number" id="rendement_actuel" ng-model= "params.rendement_actuel_hvac" placeholder="en mètres-cube / heure" value="0">
+                    </div>
+                    <div class="form-group">
+                        <h5> LE RENDEMENT SOUHAITE DU GROUPE HVAC </h5>
+                        <hr>
+                        <label for="rendement_souhaite">rendement souhaitee du groupe hvac </label>
+                        <input class="form-control" type="number" id="rendement_souhaite" ng-model= "params.rendement_souhaite_hvac" placeholder="en mètres-cube / heure" value="0">
+                        
+                    </div>
+
+                    <div class="alert alert-danger" ng-show="error">
+                        {{error}}
+                    </div>
+
+                    <button class="btn btn-info left" ng-click="prevStep()">Precedent</button>
+                    <button class="btn btn-primary" ng-click="submit()">Envoyer</button>
+                </div>
+            </form>
+    </div>
+    <script type="text/javascript" src="/formulaire/angular.min.js"></script> 
+    <script type="text/javascript" src="/formulaire/bootstrap/js/bootstrap.min.js"></script> 
+    <script type="text/javascript" src="/formulaire/form.js"></script> 
+</body>
+</html>
